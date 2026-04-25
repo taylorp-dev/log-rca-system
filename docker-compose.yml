@@ -1,0 +1,78 @@
+version: "3.9"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Log RCA System — docker-compose
+#
+# Services:
+#   anomaly_detector  PyTorch autoencoder REST API  :8000
+#   rca_service       LLM-powered root cause analysis :8001  (Week 2)
+#   chromadb          Vector store for RAG            :8002  (Week 2)
+#
+# Day 1 goal: get anomaly_detector running with `docker compose up --build`
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  anomaly_detector:
+    build:
+      context: ./anomaly_detector
+      dockerfile: Dockerfile
+    container_name: anomaly_detector
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./anomaly_detector:/app          # live-reload during dev
+      - ./logs_sample:/app/logs_sample   # shared sample log files
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=info
+      - ANOMALY_MODEL_VERSION=1.0.0
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - rca_net
+
+  # ── Week 2: uncomment when you build rca_service ──────────────────────────
+  rca_service:
+    build:
+      context: ./rca_service
+      dockerfile: Dockerfile
+    container_name: rca_service
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    environment:
+      - ANOMALY_SERVICE_URL=http://anomaly_detector:8000
+      - CHROMA_URL=http://chromadb:8000
+    depends_on:
+      anomaly_detector:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
+    networks:
+      - rca_net
+
+  # ── Week 2: uncomment when you add RAG ────────────────────────────────────
+  chromadb:
+      image: chromadb/chroma:latest
+      container_name: chromadb
+      ports:
+        - "8002:8000"
+      volumes:
+        - chroma_data:/chroma/chroma
+      networks:
+        - rca_net
+
+networks:
+  rca_net:
+    driver: bridge
+
+volumes:
+  chroma_data:

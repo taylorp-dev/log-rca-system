@@ -1,0 +1,20 @@
+# Sample log file — mix of normal and anomalous entries
+# Used to manually test the /analyze endpoint
+
+INFO 2026-03-31T08:00:01Z service started successfully pid=1234
+INFO 2026-03-31T08:00:05Z health check ok latency=2ms
+INFO 2026-03-31T08:00:10Z request complete status=200 path=/api/data duration=12ms
+DEBUG 2026-03-31T08:00:15Z processing item id=5678 queue_depth=3
+INFO 2026-03-31T08:00:20Z connection established host=db.internal port=5432
+INFO 2026-03-31T08:00:25Z request complete status=200 path=/api/status duration=8ms
+DEBUG 2026-03-31T08:00:30Z retry attempt 1 of 3 target=cache.internal
+INFO 2026-03-31T08:00:35Z reconnect successful host=cache.internal
+ERROR 2026-03-31T08:01:00Z connection refused host=ml-inference port=9000 timeout=30s
+CRITICAL 2026-03-31T08:01:05Z null pointer exception in VideoDecoder traceback follows
+ERROR 2026-03-31T08:01:10Z unauthorized access denied user=svc-account path=/admin
+WARN 2026-03-31T08:01:15Z memory overflow detected heap_used=98% gc_pressure=high
+ERROR 2026-03-31T08:01:20Z crash detected process=encoder exit_code=139 signal=SIGSEGV
+ERROR 2026-03-31T08:01:25Z disconnect unexpected host=10.0.0.5 reset by peer
+INFO 2026-03-31T08:02:00Z request complete status=200 path=/api/health duration=5ms
+INFO 2026-03-31T08:02:05Z stop graceful shutdown initiated
+INFO 2026-03-31T08:02:10Z stop graceful shutdown complete
