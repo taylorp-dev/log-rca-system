@@ -1,5 +1,3 @@
-  # version: "3.9"
-
   # ─────────────────────────────────────────────────────────────────────────────
   # Log RCA System — docker-compose
   #
@@ -35,6 +33,11 @@
         retries: 3
         start_period: 10s
       restart: unless-stopped
+      logging:
+        driver: json-file
+        options:
+          max-size: "10m"
+          max-file: "3"
       networks:
         - rca_net
 
@@ -56,6 +59,11 @@
           condition: service_healthy
         chromadb:
           condition: service_started
+      logging:
+        driver: json-file
+        options:
+          max-size: "10m"
+          max-file: "3"
       networks:
         - rca_net
       volumes:
@@ -64,14 +72,19 @@
 
     # ── Week 2: uncomment when you add RAG ────────────────────────────────────
     chromadb:
-        image: chromadb/chroma:latest
-        container_name: chromadb
-        ports:
-          - "8002:8000"
-        volumes:
-          - chroma_data:/chroma/chroma
-        networks:
-          - rca_net
+      image: chromadb/chroma:latest
+      container_name: chromadb
+      ports:
+        - "8002:8000"
+      volumes:
+        - chroma_data:/chroma/chroma
+      logging:
+        driver: json-file
+        options:
+          max-size: "10m"
+          max-file: "3"
+      networks:
+        - rca_net
 
   networks:
     rca_net:
