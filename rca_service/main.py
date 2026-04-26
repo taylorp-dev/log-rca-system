@@ -94,6 +94,41 @@ KNOWN_FAILURES = [
         "root_cause": "Encoder segfault due to buffer overflow. Last occurred Jan 28. Fix: update encoder library to v3.2.1 which patches the overflow.",
         "id": "failure_005"
     },
+    {
+        "log": "ERROR arinc429_bus_fault bus=A channel=2 error=parity_error frame=0xFFFF",
+        "root_cause": "ARINC 429 bus A parity fault — frame 0xFFFF indicates bus stuck high or no valid signal. Last occurred Dec 12 due to loose connector on channel 2. Fix: failover to bus B immediately, inspect physical connections and transceiver on bus A channel 2.",
+        "id": "failure_006"
+    },
+    {
+        "log": "ERROR seat display reset timeout seat=67C retry=1 error=no_heartbeat",
+        "root_cause": "Seat display unit lost heartbeat — either hardware communication failure (loose cable, faulty LRU) or display software hung. Last occurred Nov 8 on seat 34A due to connector corrosion. Fix: power cycle the seat display via ARINC 429 label 041 reboot command; escalate to maintenance if recovery fails.",
+        "id": "failure_007"
+    },
+    {
+        "log": "CRITICAL content_server unreachable host=ife-media.aa.internal all_retries_exhausted streams_affected=47",
+        "root_cause": "Content server unreachable after all retries — likely network partition, DNS failure, or service crash on ife-media host. Last occurred Feb 14 due to TLS certificate expiry on port 8443. Fix: verify host reachability, check DNS resolution, inspect TLS cert validity, restart content_server service if needed.",
+        "id": "failure_008"
+    },
+    {
+        "log": "CRITICAL video_decoder crash seat=112B signal=SIGSEGV codec=H264 frame=48291 input=corrupted",
+        "root_cause": "Video decoder segfault processing corrupted H264 frame — input validation missing before decoder pipeline. Last occurred Feb 3 with malformed H264 stream from content server. Fix: add frame integrity check before decoder, restart decoder process for affected seat, verify content server is serving valid streams.",
+        "id": "failure_009"
+    },
+    {
+        "log": "ERROR memory_overflow heap_used=98% gc_pressure=critical oom_risk=high process=content_manager",
+        "root_cause": "Memory leak in content_manager causing heap exhaustion. Last occurred Feb 20 after deploy v2.3.1 introduced unbounded cache growth in request handler. Fix: force GC immediately, rollback to v2.3.0 if heap does not recover, patch cache eviction policy in content_manager.",
+        "id": "failure_010"
+    },
+    {
+        "log": "WARN cache_fallback activated serving from local_storage avail_gb=28",
+        "root_cause": "Primary content delivery unavailable — cache fallback triggered to local storage. Typically follows content_server timeout or network partition. Last occurred Feb 14 alongside TLS cert expiry. Fix: verify primary content server health, check network path to ife-media host, monitor local storage capacity during fallback.",
+        "id": "failure_011"
+    },
+    {
+        "log": "ERROR passenger_call_fault zone=B seat=144A error=button_stuck duration=30s",
+        "root_cause": "Passenger call button mechanically stuck in pressed state. Hardware fault — not software. Last occurred Oct 22 on seat 201C due to debris under button cap. Fix: dispatch maintenance to physically inspect and clear or replace button at affected seat; temporarily suppress alert in software to prevent false FA notifications.",
+        "id": "failure_012"
+    },
 ]
 
 
